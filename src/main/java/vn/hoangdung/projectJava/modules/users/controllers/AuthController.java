@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import vn.hoangdung.projectJava.modules.users.requests.LoginRequest;
 import vn.hoangdung.projectJava.modules.users.resources.LoginResources;
 import vn.hoangdung.projectJava.modules.users.services.interfaces.UserServiceInterface;
@@ -22,7 +23,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResources> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResources> login(@RequestBody @Valid LoginRequest loginRequest) {
 
         LoginResources auth = this.userService.login(loginRequest);
 

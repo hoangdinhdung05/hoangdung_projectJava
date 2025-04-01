@@ -52,7 +52,12 @@ public class DatabaseSeeder implements CommandLineRunner {
             // entityManager.persist(newUser);
 
             //Cách 3: Dùng repo thêm data
-            User newUser = new User(1L, "Hoàng Đình Dũng", "hoangdinhdung0205@gmail.com", passwordEncoded, "0354870745");
+            User newUser = new User();
+            newUser.setName("Hoàng Đình Dũng");
+            newUser.setEmail("hoangdinhdung0205@gmail.com");
+            newUser.setPassword(passwordEncoded);
+            newUser.setUserCatalogueId(1L);
+            newUser.setPhone("0354870745");
             this.userRepository.save(newUser);
             logger.info("Inserted new user: " + newUser);
         }
