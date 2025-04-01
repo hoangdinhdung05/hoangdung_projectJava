@@ -1,4 +1,4 @@
-package vn.hoangdung.projectJava.modules.users.dto;
+package vn.hoangdung.projectJava.modules.users.requests;
 
 public class LoginRequest {
     

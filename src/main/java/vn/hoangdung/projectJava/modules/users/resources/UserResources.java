@@ -1,11 +1,11 @@
-package vn.hoangdung.projectJava.modules.users.dto;
+package vn.hoangdung.projectJava.modules.users.resources;
 
-public class UserDTO {
+public class UserResources {
     
     private final long id;
     private final String email;
 
-    public UserDTO(long id, String email) {
+    public UserResources(long id, String email) {
         this.id = id;
         this.email = email;
     }

@@ -5,13 +5,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import vn.hoangdung.projectJava.modules.users.dto.LoginRequest;
-import vn.hoangdung.projectJava.modules.users.dto.LoginResponse;
+
+import vn.hoangdung.projectJava.modules.users.requests.LoginRequest;
+import vn.hoangdung.projectJava.modules.users.resources.LoginResources;
 import vn.hoangdung.projectJava.modules.users.services.interfaces.UserServiceInterface;
 
 
 @RestController
-@RequestMapping("/v1/auth")
+@RequestMapping("/v1/api/auth")
 public class AuthController {
 
     private final UserServiceInterface userService;
@@ -21,9 +22,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResources> login(@RequestBody LoginRequest loginRequest) {
 
-        LoginResponse auth = this.userService.login(loginRequest);
+        LoginResources auth = this.userService.login(loginRequest);
 
         return ResponseEntity.ok(auth);
     }

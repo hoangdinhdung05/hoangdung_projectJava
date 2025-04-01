@@ -43,6 +43,16 @@ public class User {
         updatedAt = LocalDateTime.now();
     }
 
+    public User() {}
+
+    public User(long userCatalogueId, String name, String email, String password, String phone) {
+        this.userCatalogueId = userCatalogueId;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+    }
+
     public long getId() {
         return id;
     }

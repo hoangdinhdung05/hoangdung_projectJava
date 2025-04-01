@@ -1,10 +1,10 @@
 package vn.hoangdung.projectJava.modules.users.services.interfaces;
 
-import vn.hoangdung.projectJava.modules.users.dto.LoginRequest;
-import vn.hoangdung.projectJava.modules.users.dto.LoginResponse;
+import vn.hoangdung.projectJava.modules.users.requests.LoginRequest;
+import vn.hoangdung.projectJava.modules.users.resources.LoginResources;
 
 public interface UserServiceInterface {
     
-    LoginResponse login(LoginRequest loginRequest);
+    LoginResources login(LoginRequest loginRequest);
 
 }
