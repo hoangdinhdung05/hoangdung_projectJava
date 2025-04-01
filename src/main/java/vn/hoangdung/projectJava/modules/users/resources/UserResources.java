@@ -4,10 +4,12 @@ public class UserResources {
     
     private final long id;
     private final String email;
+    private final String name;
 
-    public UserResources(long id, String email) {
+    public UserResources(long id, String email, String name) {
         this.id = id;
         this.email = email;
+        this.name = name;
     }
 
     public long getId() {
@@ -16,5 +18,9 @@ public class UserResources {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getName() {
+        return name;
     }
 }

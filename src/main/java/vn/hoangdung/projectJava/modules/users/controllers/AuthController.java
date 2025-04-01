@@ -1,5 +1,6 @@
 package vn.hoangdung.projectJava.modules.users.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,6 +11,7 @@ import jakarta.validation.Valid;
 import vn.hoangdung.projectJava.modules.users.requests.LoginRequest;
 import vn.hoangdung.projectJava.modules.users.resources.LoginResources;
 import vn.hoangdung.projectJava.modules.users.services.interfaces.UserServiceInterface;
+import vn.hoangdung.projectJava.resources.ErrorResource;
 
 
 @RestController
@@ -23,11 +25,19 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResources> login(@RequestBody @Valid LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest) {
 
-        LoginResources auth = this.userService.login(loginRequest);
+        Object result = this.userService.authenticate(loginRequest);
 
-        return ResponseEntity.ok(auth);
+        if(result instanceof LoginResources loginResources) {
+            return ResponseEntity.ok(loginResources);
+        }
+
+        if(result instanceof ErrorResource errorResource) {
+            return ResponseEntity.unprocessableEntity().body(errorResource);
+        }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Network error");
     }
 
 }

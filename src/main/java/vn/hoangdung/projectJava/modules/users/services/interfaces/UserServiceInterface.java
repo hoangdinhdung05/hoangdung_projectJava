@@ -5,6 +5,6 @@ import vn.hoangdung.projectJava.modules.users.resources.LoginResources;
 
 public interface UserServiceInterface {
     
-    LoginResources login(LoginRequest loginRequest);
+    Object authenticate(LoginRequest loginRequest);
 
 }
