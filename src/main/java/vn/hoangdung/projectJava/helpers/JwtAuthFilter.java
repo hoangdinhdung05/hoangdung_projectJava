@@ -35,6 +35,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthFilter.class);
 
     @Override
+    protected boolean shouldNotFilter(
+        @NonNull HttpServletRequest request){
+        String path = request.getRequestURI();
+        return path.startsWith("/api/v1/auth/login") || 
+        path.startsWith("/api/v1/auth/refresh") || 
+        path.startsWith("/swagger-ui") || 
+        path.startsWith("/swagger-ui/**") || 
+        path.startsWith("/v3/api-docs" ) ||
+        path.startsWith("/swagger-resources/**" ) ||
+        path.startsWith("/webjars/**") || 
+        path.startsWith("/api-docs/swagger-config") || 
+        path.startsWith("/api-docs")
+        ;
+    }
+
+    @Override
     public void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
