@@ -88,7 +88,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 );
                 return;
             }
-            if(!this.jwtService.isTokenExpired(jwt)) {
+            if(this.jwtService.isTokenExpired(jwt)) {
                 sendErrorResponse(
                     response,
                     request,

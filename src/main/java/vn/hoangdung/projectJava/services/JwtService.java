@@ -13,7 +13,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
     
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(JwtService.class);
+    // private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(JwtService.class);
     private final JwtConfig jwtConfig;
     private final Key key;
 
@@ -74,53 +74,6 @@ public class JwtService {
         return claims.get("email", String.class);
     }
 
-    //Kiểm tra token có hợp lệ không
-    
-    /*
-     * 1. Check token có đúng định dạng không
-     * 2. Check token có hết hạn không
-     * 3. Check secret có đúng không
-     * 4. Check userId có tồn tại không (có matches với userId trong DB không)
-     * 5. Check token có trong blacklist không
-     */
-
-    // public boolean isValidToken(String token, UserDetails userDetails) {
-    //     try {
-    //         //1. Check định dạng token
-    //         if(!isTokenFormatValid(token)) {
-    //             logger.info("Token không đúng định dạng");
-    //             return false;
-    //         }
-    //         //2. Check secret có đúng không
-    //         if(!isSignatureValid(token)) {
-    //             logger.info("Token không đúng secret");
-    //             return false;
-    //         }
-    //         //3. Check token có hết hạn không
-    //         if(!isTokenExpired(token)) {
-    //             logger.info("Token đã hết hạn");
-    //             return false;
-    //         }
-    //         //4. Check nguồn gốc
-    //         if(!isIssuerToken(token)) {
-    //             logger.info("Token không đúng nguồn gốc");
-    //             return false;
-    //         }
-    //         //5. Check username có tồn tại không
-    //         final String emailFromToken = getEmailFromJwt(token);
-    //         if(!emailFromToken.equals(userDetails.getUsername())) {
-    //             logger.info("UserToken không hợp lệ");
-    //             return false;
-    //         }
-    //         //6. Check blackListToken
-    //     } catch (Exception e) {
-    //         // TODO: handle exception
-    //         logger.info("Xác thực token thất bại" + e.getMessage());
-    //         return false;
-    //     }
-    //     return false;
-    // }
-
     //Check định dạng
     public boolean isTokenFormatValid(String token) {
         try {
@@ -157,13 +110,12 @@ public class JwtService {
     }
 
     //Check expired
-    public boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token){
         try {
-            final Date expiration = getClaimFromToken(token, Claims::getExpiration);
+            Date expiration = getClaimFromToken(token, Claims::getExpiration);
             return expiration.before(new Date());
-        } catch (Exception e) {
-            // TODO: handle exception
-            return false;
+        } catch (Exception e){
+            return true;
         }
     }
 

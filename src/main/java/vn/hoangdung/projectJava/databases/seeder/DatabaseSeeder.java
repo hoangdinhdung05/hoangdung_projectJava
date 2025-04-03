@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import vn.hoangdung.projectJava.modules.users.enities.User;
+import vn.hoangdung.projectJava.modules.users.entities.User;
 import vn.hoangdung.projectJava.modules.users.repositories.UserRepository;
 
 @Component

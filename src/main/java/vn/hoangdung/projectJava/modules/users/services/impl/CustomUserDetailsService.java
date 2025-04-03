@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import vn.hoangdung.projectJava.modules.users.enities.User;
+import vn.hoangdung.projectJava.modules.users.entities.User;
 import vn.hoangdung.projectJava.modules.users.repositories.UserRepository;
 
 @Service

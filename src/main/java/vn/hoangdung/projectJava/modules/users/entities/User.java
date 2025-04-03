@@ -1,4 +1,4 @@
-package vn.hoangdung.projectJava.modules.users.enities;
+package vn.hoangdung.projectJava.modules.users.entities;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.Column;

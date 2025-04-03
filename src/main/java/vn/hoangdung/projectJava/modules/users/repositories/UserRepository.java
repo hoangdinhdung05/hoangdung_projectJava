@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import vn.hoangdung.projectJava.modules.users.enities.User;
+import vn.hoangdung.projectJava.modules.users.entities.User;
 
 
 @Repository

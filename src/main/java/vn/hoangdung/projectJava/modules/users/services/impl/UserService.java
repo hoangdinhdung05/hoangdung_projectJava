@@ -10,7 +10,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import vn.hoangdung.projectJava.modules.users.enities.User;
+import vn.hoangdung.projectJava.modules.users.entities.User;
 import vn.hoangdung.projectJava.modules.users.repositories.UserRepository;
 import vn.hoangdung.projectJava.modules.users.requests.LoginRequest;
 import vn.hoangdung.projectJava.modules.users.resources.LoginResources;
@@ -50,7 +50,7 @@ public class UserService extends BaseService implements UserServiceInterface {
                 throw new BadCredentialsException("Email hoặc mật khẩu không chính xác");
             }
 
-            UserResources userResources = new UserResources(user.getId(), user.getEmail(), user.getName());
+            UserResources userResources = new UserResources(user.getId(), user.getEmail(), user.getName(), user.getPhone());
             String token = jwtService.generateToken(user.getId(), user.getEmail());
             return new LoginResources(token, userResources);
 
