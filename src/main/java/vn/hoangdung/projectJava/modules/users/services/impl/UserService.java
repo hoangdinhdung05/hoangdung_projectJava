@@ -37,10 +37,6 @@ public class UserService extends BaseService implements UserServiceInterface {
     @Override
     public Object authenticate(LoginRequest request) {
         try {
-            
-            // String email = request.getEmail();
-            // String password = request.getPassword();
-
 
             //Lấy thông tin User
             User user = this.userRepository.findByEmail(request.getEmail()).orElseThrow(() -> 

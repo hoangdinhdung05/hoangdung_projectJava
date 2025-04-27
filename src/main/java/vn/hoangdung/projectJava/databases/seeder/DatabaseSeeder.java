@@ -59,6 +59,7 @@ public class DatabaseSeeder implements CommandLineRunner {
             newUser.setUserCatalogueId(1L);
             newUser.setPhone("0354870745");
             this.userRepository.save(newUser);
+            System.out.println("password: " + passwordEncoded);
             logger.info("Inserted new user: " + newUser);
         }
         

@@ -118,6 +118,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
             
+            //check token có trong black list không
+            if(this.jwtService.isBlacklistedToken(jwt)) {
+                sendErrorResponse(response, 
+                    request, 
+                    HttpServletResponse.SC_UNAUTHORIZED, 
+                    "Xác thực không thành công", 
+                    "Token đã bị đánh dấu là black list."
+                );
+                return;
+            }
+            
             //Lấy userId từ token
             userId = this.jwtService.getUserIdFromJwt(jwt);
             if(userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {

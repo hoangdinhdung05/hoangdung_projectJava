@@ -3,8 +3,11 @@ package vn.hoangdung.projectJava.services;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.hoangdung.projectJava.config.JwtConfig;
+import vn.hoangdung.projectJava.modules.users.repositories.BlacklistedTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -16,6 +19,9 @@ public class JwtService {
     // private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(JwtService.class);
     private final JwtConfig jwtConfig;
     private final Key key;
+
+    @Autowired
+    private BlacklistedTokenRepository blacklistedTokenRepository;
 
     public JwtService(JwtConfig jwtConfig, Key key) {
         this.jwtConfig = jwtConfig;
@@ -47,7 +53,7 @@ public class JwtService {
     }
 
     // //giải mã và lấy ra claims
-    private Claims getAllClaimsFromToken(String token) {
+    public Claims getAllClaimsFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -122,6 +128,10 @@ public class JwtService {
     public boolean isIssuerToken(String token) {
         String tokenIssuer = getClaimFromToken(token, Claims::getIssuer);
         return this.jwtConfig.getIssuer().equals(tokenIssuer);
+    }
+
+    public boolean isBlacklistedToken(String token) {
+        return blacklistedTokenRepository.existsByToken(token);
     }
 
 }
