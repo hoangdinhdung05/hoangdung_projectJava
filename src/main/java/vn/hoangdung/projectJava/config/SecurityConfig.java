@@ -31,7 +31,8 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
                 //1 Route Auth-No Jwt
-                .requestMatchers("/api/v1/auth/login").permitAll()
+                .requestMatchers("/api/v1/auth/login", 
+                    "/api/v1/auth/refresh").permitAll()
 
                 //2 Route Public
                 .requestMatchers("/api/v1/product").permitAll()

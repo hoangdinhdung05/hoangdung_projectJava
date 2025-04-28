@@ -1,13 +1,19 @@
 package vn.hoangdung.projectJava.services;
 
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.hoangdung.projectJava.config.JwtConfig;
+import vn.hoangdung.projectJava.modules.users.entities.RefreshToken;
 import vn.hoangdung.projectJava.modules.users.repositories.BlacklistedTokenRepository;
+import vn.hoangdung.projectJava.modules.users.repositories.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -16,12 +22,15 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
     
-    // private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(JwtService.class);
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(JwtService.class);
     private final JwtConfig jwtConfig;
     private final Key key;
 
     @Autowired
     private BlacklistedTokenRepository blacklistedTokenRepository;
+
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
 
     public JwtService(JwtConfig jwtConfig, Key key) {
         this.jwtConfig = jwtConfig;
@@ -40,6 +49,33 @@ public class JwtService {
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public String generateRefreshToken(Long userId, String email){
+        logger.info("Generating refresh token .....");
+        Date now = new Date();
+
+        Date expiryDate = new Date(now.getTime() + jwtConfig.getRefreshTokenExpirationTime());
+
+        String refreshToken =  UUID.randomUUID().toString();
+
+        LocalDateTime localExpiryDate = expiryDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByUserId(userId);
+        
+        if(optionalRefreshToken.isPresent()){
+            RefreshToken dBRefreshToken = optionalRefreshToken.get();
+            dBRefreshToken.setRefreshToken(refreshToken);
+            dBRefreshToken.setExpiryDate(localExpiryDate);
+            refreshTokenRepository.save(dBRefreshToken);
+        }else{
+            RefreshToken insertToken = new RefreshToken();
+            insertToken.setRefreshToken(refreshToken);
+            insertToken.setExpiryDate(localExpiryDate);
+            insertToken.setUserId(userId);
+            refreshTokenRepository.save(insertToken);
+        }
+        return refreshToken;
     }
 
     //Get ID
@@ -134,4 +170,14 @@ public class JwtService {
         return blacklistedTokenRepository.existsByToken(token);
     }
 
+    public boolean isRefreshTokenValid(String token){
+        try {
+            RefreshToken refreshToken = refreshTokenRepository.findByRefreshToken(token).orElseThrow(() -> new RuntimeException("Refresh token không tồn tại"));
+            LocalDateTime expirationLocalDateTime = refreshToken.getExpiryDate();
+            Date expirationDate = Date.from(expirationLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            return expirationDate.after(new Date());
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

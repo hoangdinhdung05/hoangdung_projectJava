@@ -47,8 +47,11 @@ public class UserService extends BaseService implements UserServiceInterface {
             }
 
             UserResources userResources = new UserResources(user.getId(), user.getEmail(), user.getName(), user.getPhone());
+            //Tạo token
             String token = jwtService.generateToken(user.getId(), user.getEmail());
-            return new LoginResources(token, userResources);
+            //Tạo refresh token
+            String refreshToken = jwtService.generateRefreshToken(user.getId(), user.getEmail());
+            return new LoginResources(token, refreshToken, userResources);
 
         } catch (BadCredentialsException e) {
             logger.error("Lỗi xác thực : {}", e.getMessage());
