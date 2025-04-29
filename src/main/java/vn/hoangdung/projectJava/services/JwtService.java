@@ -37,9 +37,12 @@ public class JwtService {
         this.key = Keys.hmacShaKeyFor(Base64.getEncoder().encode(jwtConfig.getSecretKey().getBytes()));
     }
 
-    public String generateToken(long userId, String email) {
+    public String generateToken(long userId, String email, Long expirationTime) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtConfig.getExpirationTime());
+        if(expirationTime == null) {
+            expirationTime = jwtConfig.getExpirationTime();
+        }
+        Date expiryDate = new Date(now.getTime() + expirationTime);
 
         return Jwts.builder()
                 .setSubject(String.valueOf(userId))

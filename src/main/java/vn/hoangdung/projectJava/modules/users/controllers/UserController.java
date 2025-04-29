@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.hoangdung.projectJava.modules.users.entities.User;
 import vn.hoangdung.projectJava.modules.users.repositories.UserRepository;
 import vn.hoangdung.projectJava.modules.users.resources.UserResources;
-import vn.hoangdung.projectJava.resources.SuccessResource;
+import vn.hoangdung.projectJava.resources.ApiResource;
 
 @RestController
 @RequestMapping("api/v1")
@@ -31,8 +31,11 @@ public class UserController {
                 .name(user.getName())
                 .phone(user.getPhone())
                 .build();
+
+        ApiResource<UserResources> response = ApiResource.ok(userResources, "Success");
+        
         //Response sang SuccessResource
-        SuccessResource<UserResources> response = new SuccessResource<UserResources>("Success", userResources);
+        // SuccessResource<UserResources> response = new SuccessResource<UserResources>("Success", userResources);
 
         return ResponseEntity.ok(response);
 

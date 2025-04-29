@@ -1,29 +1,25 @@
 package vn.hoangdung.projectJava.modules.users.services.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import vn.hoangdung.projectJava.modules.users.entities.User;
 import vn.hoangdung.projectJava.modules.users.repositories.UserRepository;
 import vn.hoangdung.projectJava.modules.users.requests.LoginRequest;
 import vn.hoangdung.projectJava.modules.users.resources.LoginResources;
 import vn.hoangdung.projectJava.modules.users.resources.UserResources;
 import vn.hoangdung.projectJava.modules.users.services.interfaces.UserServiceInterface;
-import vn.hoangdung.projectJava.resources.ErrorResource;
+import vn.hoangdung.projectJava.resources.ApiResource;
 import vn.hoangdung.projectJava.services.BaseService;
 import vn.hoangdung.projectJava.services.JwtService;
 
 @Service
 public class UserService extends BaseService implements UserServiceInterface {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    // private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     private JwtService jwtService;
@@ -33,6 +29,9 @@ public class UserService extends BaseService implements UserServiceInterface {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Value("${jwt.defaultExpiration}")
+    private long defaultExpirationTime;
 
     @Override
     public Object authenticate(LoginRequest request) {
@@ -48,18 +47,13 @@ public class UserService extends BaseService implements UserServiceInterface {
 
             UserResources userResources = new UserResources(user.getId(), user.getEmail(), user.getName(), user.getPhone());
             //Tạo token
-            String token = jwtService.generateToken(user.getId(), user.getEmail());
+            String token = jwtService.generateToken(user.getId(), user.getEmail(), defaultExpirationTime);
             //Tạo refresh token
             String refreshToken = jwtService.generateRefreshToken(user.getId(), user.getEmail());
             return new LoginResources(token, refreshToken, userResources);
 
         } catch (BadCredentialsException e) {
-            logger.error("Lỗi xác thực : {}", e.getMessage());
-            Map<String, String> errors = new HashMap<>();
-
-            errors.put("message", e.getMessage());
-            ErrorResource errorResource = new ErrorResource("Lỗi xác thức", errors);
-            return errorResource;
+            return ApiResource.error("Auth_Error", e.getMessage(), HttpStatus.UNAUTHORIZED);
 
         }
     }

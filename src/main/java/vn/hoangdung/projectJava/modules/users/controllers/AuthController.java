@@ -19,7 +19,7 @@ import vn.hoangdung.projectJava.modules.users.requests.RefreshTokenRequest;
 import vn.hoangdung.projectJava.modules.users.resources.LoginResources;
 import vn.hoangdung.projectJava.modules.users.services.impl.BlacklistedTokenService;
 import vn.hoangdung.projectJava.modules.users.services.interfaces.UserServiceInterface;
-import vn.hoangdung.projectJava.resources.ErrorResource;
+import vn.hoangdung.projectJava.resources.ApiResource;
 import vn.hoangdung.projectJava.resources.MessageResource;
 import vn.hoangdung.projectJava.resources.RefreshTokenResource;
 import vn.hoangdung.projectJava.services.JwtService;
@@ -49,10 +49,11 @@ public class AuthController {
         Object result = this.userService.authenticate(loginRequest);
 
         if(result instanceof LoginResources loginResources) {
-            return ResponseEntity.ok(loginResources);
+            ApiResource<LoginResources> response = ApiResource.ok(loginResources, "Success");
+            return ResponseEntity.ok(response);
         }
 
-        if(result instanceof ErrorResource errorResource) {
+        if(result instanceof ApiResource errorResource) {
             return ResponseEntity.unprocessableEntity().body(errorResource);
         }
 
@@ -65,8 +66,8 @@ public class AuthController {
         try {
 
             Object result = this.blacklistedTokenService.create(request);
+            // ApiResource<Object> response = ApiResource.ok(result, "Thêm token vào blacklist thành công !");
             return ResponseEntity.ok(result);
-
         } catch (Exception e) {
 
             return ResponseEntity.internalServerError().body(new MessageResource("Netword Error !"));
@@ -82,13 +83,23 @@ public class AuthController {
             //get info from token  
             BlacklistedTokenRequest request = new BlacklistedTokenRequest();
             request.setToken(token);
+            blacklistedTokenService.create(request);
+            ApiResource<Void> response = ApiResource.<Void>builder()
+                    .success(true)
+                    .message("Đăng xuất thành công")
+                    .status(HttpStatus.OK)
+                    .build();
 
-            Object result = blacklistedTokenService.create(request);
-            return ResponseEntity.ok(result);
-
-
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new MessageResource("Netword Error !"));
+
+            ApiResource<Void> errorResponse = ApiResource.<Void>builder()
+                    .success(false)
+                    .message("Token không hợp lệ")
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .build();
+
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -107,7 +118,7 @@ public class AuthController {
             Long userId = dBRefreshToken.getUserId();
             String email = dBRefreshToken.getUser().getEmail();
     
-            String newToken = jwtService.generateToken(userId, email);
+            String newToken = jwtService.generateToken(userId, email, null);
             String newRefreshToken = jwtService.generateRefreshToken(userId, email);
             RefreshTokenResource refreshTokenResource = new RefreshTokenResource(newToken, newRefreshToken);
             
