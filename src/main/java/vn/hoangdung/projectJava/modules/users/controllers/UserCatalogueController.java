@@ -1,6 +1,8 @@
 package vn.hoangdung.projectJava.modules.users.controllers;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -12,12 +14,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import vn.hoangdung.projectJava.modules.users.entities.UserCatalogue;
-import vn.hoangdung.projectJava.modules.users.repositories.UserCatalogueRepository;
 import vn.hoangdung.projectJava.modules.users.requests.UserCatalogue.StoreRequest;
 import vn.hoangdung.projectJava.modules.users.requests.UserCatalogue.UpdateRequest;
 import vn.hoangdung.projectJava.modules.users.resources.UserCatalogueResource;
@@ -29,12 +29,28 @@ import vn.hoangdung.projectJava.resources.ApiResource;
 public class UserCatalogueController {
 
     private final UserCatalogueInterface userCatalogueInterface;
-    private final UserCatalogueRepository userCatalogueRepository;
 
-    public UserCatalogueController(UserCatalogueInterface userCatalogueInterface, UserCatalogueRepository userCatalogueRepository) {
+    public UserCatalogueController(UserCatalogueInterface userCatalogueInterface) {
         this.userCatalogueInterface = userCatalogueInterface;
-        this.userCatalogueRepository = userCatalogueRepository;
     }
+
+    @GetMapping("/user-catalogues/all")
+    public ResponseEntity<?> list(HttpServletRequest request) {
+        Map<String, String[]> parameters = request.getParameterMap();
+        List<UserCatalogue> userCatalogues = this.userCatalogueInterface.getAll(parameters);
+
+        List<UserCatalogueResource> userCatalogueResources = userCatalogues.stream()
+            .map(userCatalogue -> 
+                UserCatalogueResource.builder()
+                    .id(userCatalogue.getId())
+                    .name(userCatalogue.getName())
+                    .publish(userCatalogue.getPublish())
+                    .build())
+            .collect(Collectors.toList());
+        ApiResource<List<UserCatalogueResource>> response = ApiResource.ok(userCatalogueResources, "Lấy danh sách nhóm thành viên ok");
+        return ResponseEntity.ok(response);
+    }
+
 
     @PostMapping("/user-catalogue")
     public ResponseEntity<?> create(@Valid @RequestBody StoreRequest request) {
